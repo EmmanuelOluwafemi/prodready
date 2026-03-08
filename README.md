@@ -6,18 +6,21 @@
 [![CI](https://github.com/chrisadolphus/prodready/actions/workflows/ci.yml/badge.svg)](https://github.com/chrisadolphus/prodready/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Drop 10 comprehensive standard files into any repository in seconds. Audit your codebase against production best practices. Guide your AI agents to write better, safer code.
+Drop production standards into your repository and enforce them with auditable checks.
 
 ---
 
 ## Quick Start
 
 ```bash
-# Audit your repo — get a score out of 100
-npx @chrisadolphus/prodready audit
-
-# Install all 10 standard templates
+# Install all 10 templates (backward-compatible default)
 npx @chrisadolphus/prodready init
+
+# Auto-select standards based on project signals
+npx @chrisadolphus/prodready init --auto
+
+# Audit the active profile
+npx @chrisadolphus/prodready audit
 ```
 
 ---
@@ -26,57 +29,64 @@ npx @chrisadolphus/prodready init
 
 | Command | Description |
 |---------|-------------|
-| `npx @chrisadolphus/prodready audit` | Scan your repo for missing standards and get a score out of 100 |
-| `npx @chrisadolphus/prodready init` | Drop all 10 production-grade standard templates into your repo |
-| `npx @chrisadolphus/prodready list` | Show all available standards and which are installed |
-| `npx @chrisadolphus/prodready check` | Check if your installed templates are up to date |
+| `npx @chrisadolphus/prodready init` | Install all templates |
+| `npx @chrisadolphus/prodready init --only security,privacy,reliability` | Install selected standards only |
+| `npx @chrisadolphus/prodready init --exclude payments,authentication` | Install all except excluded standards |
+| `npx @chrisadolphus/prodready init --auto` | Detect and install likely-relevant standards |
+| `npx @chrisadolphus/prodready audit` | Run standards checks and show score |
+| `npx @chrisadolphus/prodready audit --format json` | Machine-readable findings |
+| `npx @chrisadolphus/prodready audit --fail-on high --min-score 85 --require-core` | CI enforcement mode |
+| `npx @chrisadolphus/prodready list` | Show standards and profile status |
+| `npx @chrisadolphus/prodready check` | Check installed standards for drift |
 
 ---
 
-## What's Included
+## Standards Included
 
-All 10 standards templates covering the most critical gaps in production software:
+- `SECURITY.md`
+- `PRIVACY.md`
+- `AUTHENTICATION.md`
+- `PAYMENTS.md`
+- `RELIABILITY.md`
+- `ACCESSIBILITY.md`
+- `UX-STATES.md`
+- `API-DESIGN.md`
+- `EMAIL.md`
+- `DOCUMENTATION.md`
 
-| File | Covers |
-|------|--------|
-| `SECURITY.md` | Secrets management, input validation, rate limiting, security headers, AI/LLM security |
-| `PRIVACY.md` | Data minimisation, user deletion, PII in logs, cookie consent, GDPR |
-| `AUTHENTICATION.md` | Password hashing, token expiry, email verification, passkeys, RBAC |
-| `PAYMENTS.md` | Payment data security, webhook verification, dunning, receipts, cancellation |
-| `RELIABILITY.md` | Error monitoring, database backups, uptime monitoring, deployment, logging |
-| `ACCESSIBILITY.md` | WCAG 2.2 AA — images, keyboard nav, colour contrast, semantic HTML, forms |
-| `UX-STATES.md` | Empty states, loading states, error states, confirmation, success feedback |
-| `API-DESIGN.md` | Versioning, pagination, consistent responses, idempotency, data exposure |
-| `EMAIL.md` | SPF/DKIM/DMARC, unsubscribe links, sending infrastructure, link expiry |
-| `DOCUMENTATION.md` | README, code comments, changelog, environment variables, architecture records |
+Core standards for CI gating are: `SECURITY`, `PRIVACY`, `RELIABILITY`, `DOCUMENTATION`.
 
 ---
 
-## Works With Your AI Agent
+## CI Enforcement
 
-Every template is written as "MUST FOLLOW" rules that your AI coding agent reads directly from your repo.
+Use pinned versions in CI for reproducibility:
 
-**Cursor / Claude Code / Copilot prompt:**
+```yaml
+- name: Audit standards
+  run: npx @chrisadolphus/prodready@1.0.1 audit --fail-on high --min-score 85 --require-core
 ```
+
+Recommended behavior:
+- `--fail-on high`: fail on high/critical violations.
+- `--min-score 85`: keep profile quality bar explicit.
+- `--require-core`: block score gaming by excluding core standards.
+
+---
+
+## Works With AI Agents
+
+Reference your standards in agent prompts:
+
+```txt
 Follow all rules in the standards/ directory of this project.
 ```
-
-That's it. Your AI agent will automatically follow your security, accessibility, and reliability standards while writing code.
-
----
-
-## Why This Exists
-
-AI coding agents ship features fast — but they skip input validation, miss auth checks, ignore accessibility, and forget rate limiting. Without explicit rules, they don't know what "production-ready" means for your project.
-
-ProdReady gives your AI agent the rules it needs — and gives you a score to track compliance.
 
 ---
 
 ## Requirements
 
 - Node.js 18 or higher
-- No other dependencies
 
 ---
 

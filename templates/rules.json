@@ -1,0 +1,38 @@
+[
+  {"id":"no-hardcoded-secrets","standard":"SECURITY","severity":"critical","label":"No hardcoded secrets detected","checkType":"regex","remediation":"Move secrets to environment variables or a secrets manager and rotate exposed credentials."},
+  {"id":"env-gitignore","standard":"SECURITY","severity":"high","label":".env excluded from git","checkType":"file-content","remediation":"Add .env files to .gitignore before committing."},
+  {"id":"input-validation","standard":"SECURITY","severity":"high","label":"Input validation library used","checkType":"dependency-or-code","remediation":"Validate untrusted input with schema validation before processing."},
+  {"id":"rate-limiting","standard":"SECURITY","severity":"high","label":"Rate limiting configured","checkType":"code-presence","remediation":"Add application or edge rate limiting on sensitive endpoints."},
+  {"id":"security-headers","standard":"SECURITY","severity":"medium","label":"Security headers configured","checkType":"code-presence","remediation":"Set baseline security headers (CSP/HSTS/X-Frame-Options/etc)."},
+
+  {"id":"no-pii-logs","standard":"PRIVACY","severity":"high","label":"No PII in log statements","checkType":"regex","remediation":"Remove or mask PII from logs."},
+  {"id":"privacy-policy","standard":"PRIVACY","severity":"medium","label":"Privacy policy exists","checkType":"file-exists","remediation":"Add a privacy policy describing data handling and user rights."},
+  {"id":"data-deletion","standard":"PRIVACY","severity":"medium","label":"Data deletion mechanism documented","checkType":"doc-presence","remediation":"Document and implement account/data deletion workflow."},
+
+  {"id":"password-hashing","standard":"AUTHENTICATION","severity":"high","label":"Secure password hashing used (bcrypt/argon2)","checkType":"code-presence","remediation":"Use bcrypt/argon2/scrypt for credential hashing."},
+  {"id":"no-plain-passwords","standard":"AUTHENTICATION","severity":"critical","label":"No plain text passwords in code","checkType":"regex","remediation":"Remove plain-text credentials from source and use secure storage and hashing."},
+  {"id":"jwt-secret","standard":"AUTHENTICATION","severity":"high","label":"JWT secret not hardcoded","checkType":"regex","remediation":"Load JWT secrets from environment variables or secret managers."},
+
+  {"id":"no-card-storage","standard":"PAYMENTS","severity":"critical","label":"No card numbers in codebase","checkType":"regex","remediation":"Do not store card PAN/CVV; use PCI-compliant tokenization providers."},
+  {"id":"webhook-verification","standard":"PAYMENTS","severity":"high","label":"Webhook signature verification present","checkType":"code-presence","remediation":"Verify payment webhook signatures before processing events."},
+
+  {"id":"error-monitoring","standard":"RELIABILITY","severity":"medium","label":"Error monitoring configured","checkType":"dependency-or-code","remediation":"Configure production error tracking (Sentry/Highlight/etc)."},
+  {"id":"health-endpoint","standard":"RELIABILITY","severity":"medium","label":"Health check endpoint exists","checkType":"code-presence","remediation":"Expose a health endpoint for monitoring systems."},
+  {"id":"env-example","standard":"RELIABILITY","severity":"low","label":".env.example file exists","checkType":"file-exists","remediation":"Add .env.example to document required variables."},
+
+  {"id":"no-outline-none","standard":"ACCESSIBILITY","severity":"medium","label":"No outline: none without replacement","checkType":"regex","remediation":"Do not remove focus styles unless replaced with accessible alternatives."},
+  {"id":"semantic-html","standard":"ACCESSIBILITY","severity":"medium","label":"Semantic HTML elements used","checkType":"code-presence","remediation":"Use semantic landmarks and sectioning elements."},
+
+  {"id":"loading-states","standard":"UX-STATES","severity":"low","label":"Loading state patterns present","checkType":"code-presence","remediation":"Add loading states/skeletons/spinners for async UX."},
+  {"id":"error-boundaries","standard":"UX-STATES","severity":"medium","label":"Error boundaries implemented","checkType":"code-presence","remediation":"Handle render/runtime errors with boundaries or framework equivalents."},
+
+  {"id":"api-versioning","standard":"API-DESIGN","severity":"medium","label":"API routes include version prefix","checkType":"code-presence","remediation":"Version API routes to avoid breaking clients."},
+  {"id":"pagination","standard":"API-DESIGN","severity":"medium","label":"Pagination implemented on list endpoints","checkType":"code-presence","remediation":"Use pagination on list endpoints to prevent unbounded responses."},
+
+  {"id":"no-passwords-in-email","standard":"EMAIL","severity":"critical","label":"No passwords sent in email body","checkType":"regex","remediation":"Never send plain credentials by email; use one-time reset links."},
+  {"id":"email-provider","standard":"EMAIL","severity":"low","label":"Email sending service configured","checkType":"dependency-or-code","remediation":"Use a reliable email provider and configure domain authentication."},
+
+  {"id":"readme","standard":"DOCUMENTATION","severity":"low","label":"README.md exists","checkType":"file-exists","remediation":"Add README with setup, usage, and architecture basics."},
+  {"id":"env-example-docs","standard":"DOCUMENTATION","severity":"low","label":".env.example exists","checkType":"file-exists","remediation":"Document environment variables in .env.example."},
+  {"id":"changelog","standard":"DOCUMENTATION","severity":"low","label":"CHANGELOG.md exists","checkType":"file-exists","remediation":"Track notable changes in a changelog."}
+]

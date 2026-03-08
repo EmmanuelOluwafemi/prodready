@@ -1,0 +1,7 @@
+{
+  "name": "fixture-no-auth-payments",
+  "private": true,
+  "dependencies": {
+    "react": "18.2.0"
+  }
+}

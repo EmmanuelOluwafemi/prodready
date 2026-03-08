@@ -2,38 +2,115 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import chalk from '../utils/chalk.js';
-import { TEMPLATES } from '../utils/templates.js';
+import { detectProjectProfile } from '../utils/detect-project-profile.js';
+import { getTemplateById, getTemplateIds, normalizeStandardId, resolveTemplateSelection } from '../utils/standards.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TEMPLATES_DIR = path.join(__dirname, '../../templates');
 const CWD = process.cwd();
 
-export async function init() {
+function normalizeSelectionOptions(options) {
+  const onlyTokens = String(options.only || '')
+    .split(',')
+    .map((token) => token.trim())
+    .filter(Boolean);
+  const excludeTokens = String(options.exclude || '')
+    .split(',')
+    .map((token) => token.trim())
+    .filter(Boolean);
+
+  const only = [];
+  const exclude = [];
+  const unknown = [];
+
+  for (const token of onlyTokens) {
+    const normalized = normalizeStandardId(token);
+    if (!normalized) unknown.push(token);
+    else only.push(normalized);
+  }
+
+  for (const token of excludeTokens) {
+    const normalized = normalizeStandardId(token);
+    if (!normalized) unknown.push(token);
+    else exclude.push(normalized);
+  }
+
+  if (unknown.length > 0) {
+    return {
+      ok: false,
+      error: `Unknown standard id(s): ${[...new Set(unknown)].join(', ')}. Valid ids: ${getTemplateIds().join(', ')}`,
+    };
+  }
+
+  return {
+    ok: true,
+    only,
+    exclude,
+  };
+}
+
+export async function init(options = {}) {
   const targetDir = path.join(CWD, 'standards');
 
   console.log(chalk.bold('  Installing ProdReady standards...\n'));
 
-  // Create standards/ directory if it doesn't exist
+  const normalized = normalizeSelectionOptions(options);
+  if (!normalized.ok) {
+    console.error(chalk.red(`  ${normalized.error}\n`));
+    process.exitCode = 1;
+    return;
+  }
+
+  const autoProfile = options.auto ? detectProjectProfile(CWD) : null;
+  const selection = resolveTemplateSelection({
+    only: normalized.only,
+    exclude: normalized.exclude,
+    auto: autoProfile ? autoProfile.selectedStandards : null,
+  });
+
+  if (!selection.ok) {
+    console.error(chalk.red(`  ${selection.error}\n`));
+    process.exitCode = 1;
+    return;
+  }
+
+  const selectedTemplates = selection.selected.map((id) => getTemplateById(id));
+
+  if (autoProfile) {
+    console.log(chalk.bold('  Auto-detected standards profile:'));
+    console.log(chalk.dim(`  Selected: ${selection.selected.join(', ')}`));
+    if (selection.excluded.length > 0) {
+      console.log(chalk.dim(`  Excluded: ${selection.excluded.join(', ')}`));
+    }
+    console.log('');
+  }
+
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir, { recursive: true });
     console.log(chalk.dim('  Created standards/ directory\n'));
   }
 
-  // Write a .prodready version file
-  const version = JSON.parse(
-    fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf8')
-  ).version;
+  const version = JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf8')).version;
 
   fs.writeFileSync(
     path.join(targetDir, '.prodready'),
-    JSON.stringify({ version, installedAt: new Date().toISOString() }, null, 2)
+    JSON.stringify(
+      {
+        version,
+        installedAt: new Date().toISOString(),
+        selectedStandards: selection.selected,
+        excludedStandards: selection.excluded,
+        mode: options.auto ? 'auto' : normalized.only.length > 0 ? 'only' : normalized.exclude.length > 0 ? 'exclude' : 'all',
+      },
+      null,
+      2
+    )
   );
 
-  // Copy each template
   let installed = 0;
   let skipped = 0;
 
-  for (const template of TEMPLATES) {
+  for (const template of selectedTemplates) {
     const src = path.join(TEMPLATES_DIR, template.filename);
     const dest = path.join(targetDir, template.filename);
 
@@ -64,12 +141,16 @@ export async function init() {
     console.log(chalk.dim(`  ${skipped} already existed and were skipped`));
   }
 
+  if (selection.excluded.length > 0) {
+    console.log(chalk.dim(`  Profile excludes: ${selection.excluded.join(', ')}`));
+  }
+
   console.log('');
   console.log(chalk.bold('  What to do next:'));
   console.log('');
   console.log(`  1. Review the files in ${chalk.cyan('standards/')}`);
-  console.log(`  2. Share them with your team and AI coding agents`);
-  console.log(`  3. In Cursor or Claude Code, reference them in your system prompt:`);
+  console.log('  2. Share them with your team and AI coding agents');
+  console.log('  3. In Cursor or Claude Code, reference them in your system prompt:');
   console.log('');
   console.log(chalk.dim('     "Follow all rules in the standards/ directory of this project"'));
   console.log('');

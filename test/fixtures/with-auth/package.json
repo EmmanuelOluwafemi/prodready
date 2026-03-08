@@ -1,0 +1,7 @@
+{
+  "name": "fixture-with-auth",
+  "private": true,
+  "dependencies": {
+    "next-auth": "^5.0.0"
+  }
+}
