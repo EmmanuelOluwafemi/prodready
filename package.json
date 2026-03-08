@@ -1,0 +1,28 @@
+{
+  "name": "@chris/prodready",
+  "version": "1.0.0",
+  "description": "Drop production-grade standards into any repository. Audit your codebase. Guide your AI agents to write better code.",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "prodready": "./bin/cli.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "templates/",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node bin/cli.js"
+  },
+  "keywords": [
+    "security", "standards", "cli", "devtools",
+    "accessibility", "best-practices", "ai-agents"
+  ],
+  "author": "Chris",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

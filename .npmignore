@@ -1,0 +1,6 @@
+.git/
+.gitignore
+standards/
+*.log
+.DS_Store
+.npm-cache/
