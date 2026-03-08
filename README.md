@@ -2,6 +2,10 @@
 
 > Production-grade standards for any repo. Free. Open source. MIT.
 
+[![npm version](https://img.shields.io/npm/v/@chrisadolphus/prodready.svg)](https://www.npmjs.com/package/@chrisadolphus/prodready)
+[![CI](https://github.com/chrisadolphus/prodready/actions/workflows/ci.yml/badge.svg)](https://github.com/chrisadolphus/prodready/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Drop 10 comprehensive standard files into any repository in seconds. Audit your codebase against production best practices. Guide your AI agents to write better, safer code.
 
 ---
