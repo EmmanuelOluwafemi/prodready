@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import fs from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { BIN_PATH, FIXTURES_DIR } from './test-paths.js';
 
@@ -28,6 +29,33 @@ test('audit fails with explicit fail-on threshold', () => {
 });
 
 test('audit fails when require-core and profile excludes core', () => {
+  const standardsDir = path.join(FIXTURES_DIR, 'audit-missing-core', 'standards');
+  fs.mkdirSync(standardsDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(standardsDir, '.prodready'),
+    JSON.stringify(
+      {
+        version: '1.0.1',
+        installedAt: '2026-03-08T00:00:00.000Z',
+        selectedStandards: ['EMAIL'],
+        excludedStandards: [
+          'SECURITY',
+          'PRIVACY',
+          'AUTHENTICATION',
+          'PAYMENTS',
+          'RELIABILITY',
+          'ACCESSIBILITY',
+          'UX-STATES',
+          'API-DESIGN',
+          'DOCUMENTATION',
+        ],
+        mode: 'only',
+      },
+      null,
+      2
+    )
+  );
+
   const result = runInFixture('audit-missing-core', ['--require-core']);
   assert.equal(result.status, 1, `Expected exit 1, got ${result.status}. stderr: ${result.stderr}`);
 });
